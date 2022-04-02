@@ -43,15 +43,19 @@ int main( int argc, char *argv[] )
   fseek(fp, 0L, SEEK_END);
   fileSize = ftell(fp);
   rewind(fp);
+
+  int numOfWS = (fileSize/sizeof(struct SampleRound_t));
   
-  printf("Size: 0x%x\t0x%x\n", fileSize, (unsigned int)(fileSize/sizeof(struct SampleRound_t)));
+  printf("Size: 0x%x\t0x%x\n", fileSize, (unsigned int)numOfWS);
   
-  for (i=0; i<2; i++)
+  for (i=0; i<numOfWS; i++)
     {
+      uint32_t PCM[4];
+      
       fread(&sampleRound, sizeof(sampleRound), 1, fp);
       struct InterleavedBits_t* interleavedBits_p = &sampleRound.samples[0];
       uint32_t WS_num = interleavedBits_p->WS_num;
-      printf("WS_num=%d\n", WS_num);
+      printf("%06d", WS_num);
       
       for (l=0; l<8; l++)
 	{
@@ -64,27 +68,59 @@ int main( int argc, char *argv[] )
 	      return 1;
 	    }
 	  
-	  printf("mic=%02d ",
-		 interleavedBits_p->mic);
+	  //printf("mic=%02d ", interleavedBits_p->mic);
+	  for (int z=0; z<4; z++)
+	    {
+	      PCM[z] = 0;
+	    }
+
 	  for (j=0; j < 3; j++)
 	    {
 	      for (k=28; k >= 0; k -= 4)
 		{
-		  printf(" %x", (interleavedBits_p->nibbles[j]>>k)&0xf);
+		  unsigned int nibble = (interleavedBits_p->nibbles[j]>>k)&0xf;
+		  for (int ii = 0; ii < 4; ii++)
+		    {
+		      const int powers[] = {1, 2, 4, 8};
+		      int bit = (nibble&(powers[ii]));
+		      PCM[ii] *= 2;
+		      PCM[ii] |= bit >> ii;
+		    }
 		}
-	      printf(" |");
 	    }
-	  printf("|||");
+
+	  for (int z=0; z<4; z++)
+	    {
+	      printf(", 0x%06x", PCM[z]);
+	    }
+
+
+	  for (int z=0; z<4; z++)
+	    {
+	      PCM[z] = 0;
+	    }
+
 	  for (j=3; j < 6; j++)
 	    {
 	      for (k=28; k >= 0; k -= 4)
 		{
-		  printf(" %x", (interleavedBits_p->nibbles[j]>>k)&0xf);
+		  unsigned int nibble = (interleavedBits_p->nibbles[j]>>k)&0xf;
+		  for (int ii = 0; ii < 4; ii++)
+		    {
+		      const int powers[] = {1, 2, 4, 8};
+		      int bit = (nibble&(powers[ii]));
+		      PCM[ii] *= 2;
+		      PCM[ii] |= bit >> ii;
+		    }
 		}
-	      printf(" |");
 	    }
-	  printf("\n");
+
+	  for (int z=0; z<4; z++)
+	    {
+	      printf(", 0x%06x", PCM[z]);
+	    }
 	}
+      printf("\n");
     }
   
   return 0;
