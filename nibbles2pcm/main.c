@@ -55,7 +55,7 @@ int main( int argc, char *argv[] )
       fread(&sampleRound, sizeof(sampleRound), 1, fp);
       struct InterleavedBits_t* interleavedBits_p = &sampleRound.samples[0];
       uint32_t WS_num = interleavedBits_p->WS_num;
-      printf("%06d", WS_num);
+      printf("%06x", WS_num);
       
       for (l=0; l<8; l++)
 	{
