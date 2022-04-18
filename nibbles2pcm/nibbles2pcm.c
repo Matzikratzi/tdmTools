@@ -55,7 +55,7 @@ int main( int argc, char *argv[] )
       fread(&sampleRound, sizeof(sampleRound), 1, fp);
       struct InterleavedBits_t* interleavedBits_p = &sampleRound.samples[0];
       uint32_t WS_num = interleavedBits_p->WS_num;
-      printf("%06x", WS_num);
+      printf("%8d", WS_num);
       
       for (l=0; l<8; l++)
 	{
@@ -91,7 +91,12 @@ int main( int argc, char *argv[] )
 
 	  for (int z=0; z<4; z++)
 	    {
-	      printf(", 0x%06x", PCM[z]);
+	      int32_t val = PCM[z];
+	      if (0x800000 == (val & 0x800000))
+		{
+		  val |= 0xffff000000;
+		}
+	      printf(", %9d", val);
 	    }
 
 
@@ -117,7 +122,12 @@ int main( int argc, char *argv[] )
 
 	  for (int z=0; z<4; z++)
 	    {
-	      printf(", 0x%06x", PCM[z]);
+	      int32_t val = PCM[z];
+	      if (0x800000 == (val & 0x800000))
+		{
+		  val |= 0xffff000000;
+		}
+	      printf(", %9d", val);
 	    }
 	}
       printf("\n");
