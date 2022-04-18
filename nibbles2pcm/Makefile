@@ -4,10 +4,13 @@ DEPS = #hellomake.h
 OBJ = nibbles2pcm.o
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -g -c -o $@ $< $(CFLAGS)
 
 nibbles2pcm: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
+	$(CC) -g -o $@ $^ $(CFLAGS)
 
-all: nibbles2pcm
-	./nibbles2pcm ~/440-4400-0405-2.bin > 440-2.txt
+all: nibbles2pcm 
+	./nibbles2pcm ~/440-4400-0405-2.bin 440-2.txt
+
+clean:
+	rm $(OBJ) nibbles2pcm

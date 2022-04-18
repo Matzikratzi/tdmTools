@@ -18,25 +18,28 @@ int fileSize;
 
 int main( int argc, char *argv[] )
 {
-  FILE *fp;
+  FILE *fp, *rfp;
   struct SampleRound_t sampleRound;
+  int simulSamps[64];
   int i, j, k, l;
 
-  if( argc > 2 )
+  if( 3 != argc )
     {
-      printf("Too many arguments supplied.\n");
-      return 1;
-    }
-  if (argc != 2)
-    {
-      printf("One argument expected.\n");
+      printf("Expecting two arguments!\n");
       return 1;
     }
 
   fp = fopen(argv[1], "r");
   if (NULL == fp)
     {
-      printf("Could not open file \"%s\"\n", argv[1]);
+      printf("Could not open input file \"%s\"\n", argv[1]);
+      return 1;
+    }
+
+  rfp = fopen(argv[2], "w");
+  if (NULL == rfp)
+    {
+      printf("Could not open result-file \"%s\"\n", argv[1]);
       return 1;
     }
 
@@ -55,7 +58,7 @@ int main( int argc, char *argv[] )
       fread(&sampleRound, sizeof(sampleRound), 1, fp);
       struct InterleavedBits_t* interleavedBits_p = &sampleRound.samples[0];
       uint32_t WS_num = interleavedBits_p->WS_num;
-      printf("%8d", WS_num);
+      fprintf(rfp, "%8d", WS_num);
       
       for (l=0; l<8; l++)
 	{
@@ -96,7 +99,7 @@ int main( int argc, char *argv[] )
 		{
 		  val |= 0xffff000000;
 		}
-	      printf(", %9d", val);
+	      fprintf(rfp, ", %9d", val);
 	    }
 
 
@@ -127,10 +130,10 @@ int main( int argc, char *argv[] )
 		{
 		  val |= 0xffff000000;
 		}
-	      printf(", %9d", val);
+	      fprintf(rfp, ", %9d", val);
 	    }
 	}
-      printf("\n");
+      fprintf(rfp, "\n");
     }
   
   return 0;
