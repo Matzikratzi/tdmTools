@@ -21,7 +21,7 @@ int main( int argc, char *argv[] )
   FILE *fp, *rfp;
   struct SampleRound_t sampleRound;
   int simulSamps[64];
-  int i, j, k, l;
+  int i, j, k, l, p;
 
   if( 3 != argc )
     {
@@ -100,7 +100,9 @@ int main( int argc, char *argv[] )
 		{
 		  val |= 0xffff000000;
 		}
-	      fprintf(rfp, ", %9d", val);
+	      simulSamps[z*16+l*2] = val;
+
+	      /* fprintf(rfp, ", %9d", val); */
 	    }
 
 
@@ -131,8 +133,14 @@ int main( int argc, char *argv[] )
 		{
 		  val |= 0xffff000000;
 		}
-	      fprintf(rfp, ", %9d", val);
+	      simulSamps[z*16+l*2+1] = val;
+
+	      /* fprintf(rfp, ", %9d", val); */
 	    }
+	}
+      for (p = 0; p < 64; p++)
+	{
+	  fprintf(rfp, ", %9d", simulSamps[p]);
 	}
       fprintf(rfp, "\n");
     }
