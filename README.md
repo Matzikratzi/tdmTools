@@ -4,7 +4,6 @@ Might actually be "mirrored" in each unsigned int 32.
 Big endian mixed with little endian is a bit hard.
 See the code in nibbles2pcm.c.
 
-This file must be looked at in raw mode.
 
 ```text
  0                   1                   2                   3
